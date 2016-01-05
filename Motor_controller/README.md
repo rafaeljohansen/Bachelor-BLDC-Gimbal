@@ -4,8 +4,8 @@ The code is interrupt based, and takes step and direction for each motor. A step
 
 ## Connection
 #### Motor 1
-Step: PC1 (Analog pin 1) <br/>
-Direction: PD2 (Digital pin 2)
+Step: PD2 (Digital pin 2) <br/>
+Direction: PC1 (Analog pin 1)
 <br/>
 
 #### Motor 2
