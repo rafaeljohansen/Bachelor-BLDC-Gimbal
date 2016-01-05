@@ -7,7 +7,7 @@
 * Assemble a gimbal for testing
 * Configure master device (ESP8266?) using Blynk
 * Stable PID regulation
-	* Get the motor controller up and running
+	* ~~Get the motor controller up and running~~
 	* Get feedback from accelerometer (ADXL345)
 	* Communicate with motor controller (step and direction)
 	* Set offset using an RC controller
