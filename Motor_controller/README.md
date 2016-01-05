@@ -6,6 +6,7 @@ The code is interrupt based, and takes step and direction for each motor. A step
 #### Motor 1
 Step: PC1 (Analog pin 1) <br/>
 Direction: PD2 (Digital pin 2)
+<br/>
 
 #### Motor 2
 Step: PC2 (Analog pin 2) <br/>
