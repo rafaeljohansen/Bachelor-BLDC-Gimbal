@@ -22,7 +22,7 @@ void setup()
 
   DDRC &= ~0x0E; // 0b00001110 -> set PC1, PC2 and PC3 as input
   DDRD &= ~0x04; // 0b00000100 -> set PD2 as input
-  PORTC |= 0x0E; // 0b00001110 -> enable input pullup for PC3
+  PORTC |= 0x0E; // 0b00001110 -> enable input pullup for PC3, PC2 and PC1
   PORTD |= 0x04; // 0b00000100 -> enable input pullup for PD2
   
   // Pin Change Interrupt enable on PCINT1 vector (PCINT8 - PCINT14)
@@ -49,7 +49,7 @@ ISR(PCINT1_vect)
   if(PINC & _BV(PC2)) // if(PC2.read == true)
   {   
     ((PINC & _BV(PC3)) ? Motor2.step(true) : Motor2.step(false));
-    // If PC3 == HIGH -> Motor2.step(true), else -> Motor2.step(false)
+    // If PC3.read == HIGH -> Motor2.step(true), else -> Motor2.step(false)
   }  
 }
 
@@ -61,7 +61,7 @@ ISR(PCINT2_vect)
   if(PIND & _BV(PD2)) // if(PD2.read == true)
   {    
     ((PINC & _BV(PC1)) ? Motor1.step(true) : Motor1.step(false));
-   // If PC1 == HIGH -> Motor1.step(true), else -> Motor1.step(false)
+   // If PC1.read == HIGH -> Motor1.step(true), else -> Motor1.step(false)
   }
 }
 

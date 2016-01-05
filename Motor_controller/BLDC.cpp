@@ -24,7 +24,7 @@ void BLDC::begin() // Needed to permanently set the timer registers
   TCCR0B = TCCR0B & 0b11111000 | 0x01; // pin 5 and 6
   TCCR1B = TCCR1B & 0b11111000 | 0x01; // pin 9 and 10
   TCCR2B = TCCR2B & 0b11111000 | 0x01; // pins 3 and 11   
-  ICR1 = 255; // 8-bit PWM resolution
+  ICR1 = 0xFF; // 8-bit PWM resolution
   
   step(true); //enable PWM on the three phases
 }
