@@ -15,12 +15,18 @@ BLDC::BLDC(uint8_t phase1, uint8_t phase2, uint8_t phase3)
   pinMode(_phase1, OUTPUT);
   pinMode(_phase2, OUTPUT);
   pinMode(_phase3, OUTPUT);
+}
 
-  // Set PWM frequency @ 31250 Hz
+
+void BLDC::begin() // Needed to permanently set the timer registers
+{
+  // Set PWM frequency to 31250 Hz
   TCCR0B = TCCR0B & 0b11111000 | 0x01; // pin 5 and 6
   TCCR1B = TCCR1B & 0b11111000 | 0x01; // pin 9 and 10
-  TCCR2B = TCCR2B & 0b11111000 | 0x01; // pins 3 and 11 
+  TCCR2B = TCCR2B & 0b11111000 | 0x01; // pins 3 and 11   
+  ICR1 = 255; // 8-bit PWM resolution
   
+  step(true); //enable PWM on the three phases
 }
 
 
