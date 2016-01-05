@@ -3,8 +3,8 @@
  trig a step on the motor on a rising edge.
 
        MOTOR1          MOTOR2
-Step:  PD2/D2(/INT)    PC1/A1 
-Dir:   PC2/A2          PC3/A3(/M_P)
+Step:  PD2/D2(/INT)    PC2/A2 
+Dir:   PC1/A1          PC3/A3(/M_P)
 */
 
 #include "BLDC.h"
@@ -28,7 +28,7 @@ void setup()
   // Pin Change Interrupt enable on PCINT1 vector (PCINT8 - PCINT14)
   PCICR |= _BV(PCIE1);    // Enable PCIE1 (PCINT8 - 14)
   PCICR |= _BV(PCIE2);    // Enable PCIE2 (PCINT16 - 23) 
-  PCMSK1 |= _BV(PCINT9);  // Enable PCINT9 (PC1)
+  PCMSK1 |= _BV(PCINT10);  // Enable PCINT10 (PC2)
   PCMSK2 |= _BV(PCINT18); // Enable PCINT18 (PD2)
 
   sei(); // Turn global interrupt on.
@@ -46,7 +46,7 @@ void loop()
 // Trigs when PC1 (PCINT9) detects a rising edge
 ISR(PCINT1_vect) 
 { 
-  if(PINC & _BV(PC1)) // if(PC1.read == true)
+  if(PINC & _BV(PC2)) // if(PC2.read == true)
   {   
     ((PINC & _BV(PC3)) ? Motor2.step(true) : Motor2.step(false));
     // If PC3 == HIGH -> Motor2.step(true), else -> Motor2.step(false)
@@ -60,8 +60,8 @@ ISR(PCINT2_vect)
 {
   if(PIND & _BV(PD2)) // if(PD2.read == true)
   {    
-    ((PINC & _BV(PC2)) ? Motor1.step(true) : Motor1.step(false));
-   // If PC2 == HIGH -> Motor1.step(true), else -> Motor1.step(false)
+    ((PINC & _BV(PC1)) ? Motor1.step(true) : Motor1.step(false));
+   // If PC1 == HIGH -> Motor1.step(true), else -> Motor1.step(false)
   }
 }
 
