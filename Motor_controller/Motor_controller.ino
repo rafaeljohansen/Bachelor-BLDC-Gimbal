@@ -16,7 +16,6 @@ BLDC Motor2(3,5,6);
 
 void setup() 
 {
-  Serial.begin(9600);
   Motor1.begin();
   Motor2.begin();
 
