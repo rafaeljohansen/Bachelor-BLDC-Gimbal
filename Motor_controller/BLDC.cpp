@@ -4,17 +4,17 @@
 #include "Arduino.h"
 
     
-BLDC::BLDC(uint8_t phase1, uint8_t phase2, uint8_t phase3)
+BLDC::BLDC(uint8_t t_phase1, uint8_t t_phase2, uint8_t t_phase3)
 {
   //Store arguments to local variables
-  _phase1 = phase1;
-  _phase2 = phase2;
-  _phase3 = phase3;
+  m_phase1 = t_phase1;
+  m_phase2 = t_phase2;
+  m_phase3 = t_phase3;
 
   //set to output
-  pinMode(_phase1, OUTPUT);
-  pinMode(_phase2, OUTPUT);
-  pinMode(_phase3, OUTPUT);
+  pinMode(m_phase1, OUTPUT);
+  pinMode(m_phase2, OUTPUT);
+  pinMode(m_phase3, OUTPUT);
 }
 
 
@@ -30,9 +30,9 @@ void BLDC::begin() // Needed to permanently set the timer registers
 }
 
 
-void BLDC::step(bool direction)
+void BLDC::step(bool t_direction)
 {  
-  if (direction == true) // clockwise or counter clockwise
+  if (t_direction == true) // clockwise or counter clockwise
   {
     currentStepPhase1++;
     currentStepPhase2++;
@@ -55,7 +55,7 @@ void BLDC::step(bool direction)
   if(currentStepPhase3 > 47) currentStepPhase3 = 0;
   if(currentStepPhase3 < 0) currentStepPhase3 = 47;
      
-  analogWrite(_phase1, pwmSin[currentStepPhase1]);
-  analogWrite(_phase2, pwmSin[currentStepPhase2]);
-  analogWrite(_phase3, pwmSin[currentStepPhase3]);
+  analogWrite(m_phase1, pwmSin[currentStepPhase1]);
+  analogWrite(m_phase2, pwmSin[currentStepPhase2]);
+  analogWrite(m_phase3, pwmSin[currentStepPhase3]);
 }

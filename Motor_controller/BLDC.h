@@ -11,9 +11,9 @@ class BLDC
     void step(bool direction);
     
   private:
-    uint8_t _phase1;
-    uint8_t _phase2;
-    uint8_t _phase3;
+    uint8_t m_phase1;
+    uint8_t m_phase2;
+    uint8_t m_phase3;
     int8_t currentStepPhase1 = 0;
     int8_t currentStepPhase2 = 16;
     int8_t currentStepPhase3 = 32; 
