@@ -10,7 +10,7 @@ We use the camel case notation
 * Variables (provate or not) should never start with `_` or `__`. These are reserved for the
 compiler. Use `t_` for parameters and `m_` for members.
   * `PrivateSize(int t_width, int t_height)`
-  *  `return m_width;`
+  *  `m_width = t_width;`
 
 #### Structure
 * (Always) put the brackets on the next line:
@@ -34,4 +34,9 @@ if ( true )
 {
   //do something
 }
+```
+
+* Adding spaces around math symbols makes the code much easier to read:
+```C++
+value = 2 * PI * sensorValue;
 ```
