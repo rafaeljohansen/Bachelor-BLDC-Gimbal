@@ -6,7 +6,7 @@
 class BLDC
 {
   public:
-    BLDC(uint8_t phase1, uint8_t phase2, uint8_t phase3);
+    BLDC(uint8_t t_phase1, uint8_t t_phase2, uint8_t t_phase3);
     void begin();
     void step(bool direction);
     
