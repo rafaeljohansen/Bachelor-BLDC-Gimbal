@@ -20,6 +20,14 @@ if(true)
   //do something
 }
 ```
+
+* Brackets are not needed if you just got one line:
+```C++
+if(true)
+  //do something
+
+```
+
 * AVOID spacing like this:
 ```C++
 if ( true )
