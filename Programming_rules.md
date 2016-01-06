@@ -11,3 +11,11 @@ We use the camel case notation
 compiler. Use `t_` for parameters and `m_` for members.
 ** PrivateSize(int t_width, int t_height)
 **  return m_width;
+
+#### Structure
+* (Always) put the brackets on the next line:
+```C++
+if(true)
+{
+  //do something
+}```
