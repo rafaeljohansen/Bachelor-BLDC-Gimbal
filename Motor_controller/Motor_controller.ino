@@ -16,9 +16,10 @@ BLDC Motor2(3,5,6);
 
 void setup() 
 {
+  Serial.begin(9600);
   Motor1.begin();
   Motor2.begin();
-
+  
   DDRC &= ~0x0E; // 0b00001110 -> set PC1, PC2 and PC3 as input
   DDRD &= ~0x04; // 0b00000100 -> set PD2 as input
   PORTC |= 0x0E; // 0b00001110 -> enable input pullup for PC3, PC2 and PC1
