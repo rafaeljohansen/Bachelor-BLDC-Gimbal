@@ -18,6 +18,7 @@ BLDC::BLDC(uint8_t t_phase1, uint8_t t_phase2, uint8_t t_phase3)
 }
 
 
+
 void BLDC::begin() // Needed to permanently set the timer registers
 {
   // Set PWM frequency to 31250 Hz
