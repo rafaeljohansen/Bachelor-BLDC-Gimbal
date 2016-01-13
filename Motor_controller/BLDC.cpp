@@ -59,14 +59,15 @@ void BLDC::step(bool t_direction)
   analogWrite(m_phase1, pwmSin[currentStepPhase1]);
   analogWrite(m_phase2, pwmSin[currentStepPhase2]);
   analogWrite(m_phase3, pwmSin[currentStepPhase3]);
-  
+
+/*  
   Serial.print("");
   Serial.print(pwmSin[currentStepPhase1]);
   Serial.print(",");   
   Serial.print(pwmSin[currentStepPhase2]);
   Serial.print(",");  
   Serial.println(pwmSin[currentStepPhase3]);
-  
+*/  
   
   
 }
