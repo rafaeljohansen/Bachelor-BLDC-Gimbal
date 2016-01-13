@@ -54,8 +54,19 @@ void BLDC::step(bool t_direction)
        
   if(currentStepPhase3 > maxArrayPlace) currentStepPhase3 = 0;
   if(currentStepPhase3 < 0) currentStepPhase3 = maxArrayPlace;
-     
+
+  
   analogWrite(m_phase1, pwmSin[currentStepPhase1]);
   analogWrite(m_phase2, pwmSin[currentStepPhase2]);
   analogWrite(m_phase3, pwmSin[currentStepPhase3]);
+  
+  Serial.print("");
+  Serial.print(pwmSin[currentStepPhase1]);
+  Serial.print(",");   
+  Serial.print(pwmSin[currentStepPhase2]);
+  Serial.print(",");  
+  Serial.println(pwmSin[currentStepPhase3]);
+  
+  
+  
 }

@@ -16,7 +16,7 @@ BLDC Motor2(3,5,6);
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Motor1.begin();
   Motor2.begin();
   
@@ -50,11 +50,12 @@ ISR(PCINT1_vect)
   {   
     ((PINC & _BV(PC3)) ? Motor2.step(true) : Motor2.step(false));
     // If PC3.read == HIGH -> Motor2.step(true), else -> Motor2.step(false)
+    
   }  
 }
 
 
-
+/*
 // Trigs when PD2 (PCINT18) detects a rising edge
 ISR(PCINT2_vect) 
 {
@@ -64,4 +65,4 @@ ISR(PCINT2_vect)
    // If PC1.read == HIGH -> Motor1.step(true), else -> Motor1.step(false)
   }
 }
-
+*/
