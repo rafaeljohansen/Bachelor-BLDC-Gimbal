@@ -69,6 +69,7 @@ void BLDC::step(bool t_direction)
   Serial.print(",");  
   Serial.println(pwmSin[currentStepPhase3]);
 */  
+
   
   
 }
