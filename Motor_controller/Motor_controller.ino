@@ -55,7 +55,7 @@ ISR(PCINT1_vect)
 }
 
 
-/*
+
 // Trigs when PD2 (PCINT18) detects a rising edge
 ISR(PCINT2_vect) 
 {
@@ -65,4 +65,4 @@ ISR(PCINT2_vect)
    // If PC1.read == HIGH -> Motor1.step(true), else -> Motor1.step(false)
   }
 }
-*/
+
