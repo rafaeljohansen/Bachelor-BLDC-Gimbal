@@ -28,7 +28,7 @@ void setup()
   pinMode(4, OUTPUT);
   Angle.begin();
 //  Azimuth.begin();
-  t.every(10, step, (void*)0);
+  t.every(100, step, (void*)0);
 }
 
 
@@ -53,7 +53,7 @@ void step(void* context)
   if((counter % pulse) == 0)
   {
     digitalWrite(4, HIGH);
-    delayMicroseconds(8);
+    delayMicroseconds(20);
     digitalWrite(4, LOW);
   }
   
