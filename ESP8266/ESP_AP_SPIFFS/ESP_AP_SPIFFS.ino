@@ -1,17 +1,48 @@
-// Needed for Wifi and access point
+
+/***** Included libraries *****/
 #include <FS.h>                   
 #include <ESP8266WiFi.h>          
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>          
-#include <ArduinoJson.h>   
+#include <ArduinoJson.h>
+//#include MPU6050.h
+//#include blynk.h
 
-//define your default values here, if there are different values in config.json, they are overwritten.
-char token[32];
+
+/***** Pin definitions *****/
 
 
-//flag for saving data
-bool shouldSaveConfig = false;
+
+/***** Variables *****/
+char token[32]; // Blynk token will be stored here
+bool shouldSaveConfig = false; // Flag for saving data in the web page text fields
+
+
+
+/***** Objects *****/
+StaticJsonBuffer<300> jsonDataBuffer; // 300 bytes JSON buffer for UART communication
+JsonObject& jsonSerial = jsonDataBuffer.createObject(); // A reference to the JsonObject, the actual bytes are inside the JsonDataBuffer
+JsonArray& Accelerometer1 = jsonSerial.createNestedArray("Accelerometer1"); // Object to create an array for Accelerometer 1
+JsonArray& Accelerometer2 = jsonSerial.createNestedArray("Accelerometer2"); // Object to create an array for Accelerometer 2
+
+
+
+/***** JSON string build *****/
+//Accelerometer1.add(0); // Accelerometer 1; X-axis
+//Accelerometer1.add(0); // Accelerometer 1; Y-axis
+//Accelerometer1.add(0); // Accelerometer 1; Z-axis
+//Accelerometer2.add(0); // Accelerometer 2; X-axis
+//Accelerometer2.add(0); // Accelerometer 2; Y-axis
+//Accelerometer2.add(0); // Accelerometer 2; Z-axis
+//jsonSerial["Setpoint"] = 0;
+//jsonSerial["P"] = 0;
+//jsonSerial["I"] = 0;
+//jsonSerial["D"] = 0;
+
+
+
+
 
 //callback notifying us of the need to save config
 void saveConfigCallback () {
@@ -55,6 +86,7 @@ void setup() {
 
           /****** Copy the Json values to the global variables ******/
           strcpy(token, json["token"]);
+
         } 
         else 
           Serial.println("failed to load json config");
@@ -85,12 +117,11 @@ void setup() {
 
   //Clears all wifi settings
   //wifiManager.resetSettings();
-
-  
+ 
 
   //fetches ssid and pass and tries to connect
   //if it does not connect it starts an access point with the specified name
-  //here  "AutoConnectAP"
+  //here  "ESP8266"
   //and goes into a blocking loop awaiting configuration
   if (!wifiManager.autoConnect("ESP8266")) {
     Serial.println("failed to connect and hit timeout");
@@ -125,16 +156,12 @@ void setup() {
     //json["token"].printTo(Serial); --> will print "storedValue" (with quotes)
     //json["storedValue"].printTo(Serial); 
 
-    // copy Json content to 'token' and 'storedValue'
-    strcpy(token, json["token"]);
 
     //This saves content into the Json file
     json.printTo(configFile);
     configFile.close();
     Serial.println("Blynk token stored!");
   }
-
- 
 
 
   Serial.print("Stored token: ");
@@ -145,11 +172,17 @@ void setup() {
 
   //Rest of the setup goes below:
 
+  
+
+  
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  
 
 }
+
+
+
