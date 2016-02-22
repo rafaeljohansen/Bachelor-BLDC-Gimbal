@@ -59,8 +59,10 @@ void setup()
   Motor2.begin();
 
   /***** ATmega328p register settings *****/
-  DDRC &= ~0x0E; // 0b00001110 -> set PC1, PC2 and PC3 as input
+  DDRC &= ~0x0E; // 0b00001110 -> 11110001 & XXXXXXXX = XXXX000X  set PC1, PC2 and PC3 as input (0 is input, 1 is output)
+  // DDRC = DDRC & ~0x0E;
   DDRD &= ~0x04; // 0b00000100 -> set PD2 as input
+  PORTC |= _BV(PC3);
   PORTC |= 0x0C; // 0b00001100 -> enable input pullup for PC3 and PC2
   //PORTD |= 0x04; // 0b00000100 -> enable input pullup for PD2
   

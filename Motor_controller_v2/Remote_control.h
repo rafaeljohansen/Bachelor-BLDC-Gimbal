@@ -14,9 +14,10 @@ class Remote_control
 {
   public:
 
-  /***** Contrsuctor and methods *****/
+  /***** Constructor and methods *****/
     Remote_control(uint32_t RemoteInterval);
     void readRemote(uint64_t currentMicros);
+    void readBlynk(uint64_t currentMicros);
     int16_t setPoint(uint64_t currentMicros);
     
   
@@ -36,8 +37,10 @@ class Remote_control
 
   /***** Update interval *****/
     uint32_t m_RemoteInterval;
-    uint32_t m_CWinterval;
-    uint32_t m_CCWinterval;
+    uint32_t m_CWintervalRC;
+    uint32_t m_CCWintervalRC;
+    uint32_t m_CWintervalBlynk;
+    uint32_t m_CCWintervalBlynk;
    
     
     uint64_t previousMicrosSetpoint = 0;
