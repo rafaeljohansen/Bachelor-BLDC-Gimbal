@@ -39,7 +39,8 @@ void getPIDFromSPIFFS()
           Serial.println("Storing values to jsonSerial");
 
           /***** Copy the Json values to the global variables *****/
-          jsonSerial["Setpoint"] = json["Setpoint"];
+          jsonSerial["Setpoint1"] = json["Setpoint1"];
+          jsonSerial["Setpoint2"] = json["Setpoint2"];
           jsonSerial["P"] = json["P"];
           jsonSerial["I"] = json["I"];
           jsonSerial["D"] = json["D"];
@@ -93,7 +94,8 @@ void writePIDtoSPIFFS()
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
   
-  json["Setpoint"] = jsonSerial["Setpoint"];  
+  json["Setpoint1"] = jsonSerial["Setpoint1"]; 
+  json["Setpoint2"] = jsonSerial["Setpoint2"];  
   json["P"] = jsonSerial["P"];
   json["I"] = jsonSerial["I"];
   json["D"] = jsonSerial["D"];

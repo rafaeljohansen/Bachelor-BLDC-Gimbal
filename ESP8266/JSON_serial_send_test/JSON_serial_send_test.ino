@@ -45,13 +45,14 @@ void setup() {
 
 
 void loop() {
-  getPIDFromSPIFFS();
+  getPIDFromSPIFFS(); //Only necessary on startup
   
   //Will be done in blynk
-  jsonSerial["Setpoint"] = i;
-  jsonSerial["P"] = i + 1;
-  jsonSerial["I"] = i + 2;
-  jsonSerial["D"] = i + 3;
+  jsonSerial["Setpoint1"] = i;
+  jsonSerial["Setpoint2"] = i+1;
+  jsonSerial["P"] = i + 2;
+  jsonSerial["I"] = i + 3;
+  jsonSerial["D"] = i + 4;
 
 
   Accelerometer1[0] = i;
@@ -61,8 +62,9 @@ void loop() {
   Accelerometer2[1] = i+4;
   Accelerometer2[2] = i+5;  
 
-
-  writePIDtoSPIFFS();
+  //Only necessary when permanently storing
+  //Shold not run in a loop
+  writePIDtoSPIFFS(); 
   
 
   jsonSerial.prettyPrintTo(Serial);

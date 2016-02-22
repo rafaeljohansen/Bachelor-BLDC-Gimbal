@@ -9,7 +9,8 @@
 String jsonReceived = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
-int jsonSetpoint;
+int jsonSetpoint1;
+int jsonSetpoint2;
 int jsonP;
 int jsonI;
 int jsonD;
@@ -49,7 +50,8 @@ void loop()
     
 
     //Store data to variables
-    jsonSetpoint = root["Setpoint"];
+    jsonSetpoint1 = root["Setpoint1"];
+    jsonSetpoint2 = root["Setpoint2"];
     jsonP = root["P"];
     jsonI = root["I"];
     jsonD = root["D"];
@@ -64,8 +66,10 @@ void loop()
     Serial.println("Received JSON string:");
     Serial.println(jsonReceived);
     Serial.println("Parsed data:");
-    Serial.print("Setpoint: ");
-    Serial.println(jsonSetpoint);
+    Serial.print("Setpoint 1: ");
+    Serial.println(jsonSetpoint1);
+    Serial.print("Setpoint 2: ");
+    Serial.println(jsonSetpoint2);
     Serial.print("P: ");
     Serial.println(jsonP);
     Serial.print("I: ");
