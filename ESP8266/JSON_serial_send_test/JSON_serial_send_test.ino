@@ -32,9 +32,9 @@ void setup() {
   Accelerometer1.add(1); // Accelerometer 1; X-axis
   Accelerometer1.add(2); // Accelerometer 1; Y-axis
   Accelerometer1.add(3); // Accelerometer 1; Z-axis
-  Accelerometer2.add(4); // Accelerometer 2; X-axis
-  Accelerometer2.add(5); // Accelerometer 2; Y-axis
-  Accelerometer2.add(6); // Accelerometer 2; Z-axis
+  Accelerometer2.add(1); // Accelerometer 2; X-axis
+  Accelerometer2.add(2); // Accelerometer 2; Y-axis
+  Accelerometer2.add(3); // Accelerometer 2; Z-axis
 
   /*** Init MPU6050 with delay here **/
 
@@ -45,7 +45,7 @@ void setup() {
 
 
 void loop() {
-  getPIDFromSPIFFS(); //Only necessary on startup
+  getPIDFromSPIFFS(); //Only necessary on startup. Run in setup();
   
   //Will be done in blynk
   jsonSerial["Setpoint1"] = i;
@@ -63,7 +63,7 @@ void loop() {
   Accelerometer2[2] = i+5;  
 
   //Only necessary when permanently storing
-  //Shold not run in a loop
+  //Shold not run in a loop, but as an event
   writePIDtoSPIFFS(); 
   
 
