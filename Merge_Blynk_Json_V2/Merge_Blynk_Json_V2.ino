@@ -23,11 +23,15 @@ int D;
 int x;
 int y;
 int graph;
-bool autoTuneBtn;
-uint32_t CWintervalBlynkX;
-uint32_t CCWintervalBlynkX;
-uint32_t CWintervalBlynkY;
-uint32_t CCWintervalBlynkY;
+bool autoTuneEnable;
+int32_t intervalYaw;
+int32_t intervalPitch;
+String jsonReceived = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+int jsonP;
+int jsonI;
+int jsonD;
+
 
 /***** Objects *****/
 StaticJsonBuffer<300> jsonDataBuffer; // 300 bytes JSON buffer for UART communication
@@ -102,45 +106,40 @@ void task()
   Serial.print("\t");
   Serial.print(D);
   Serial.print("\t");
-  Serial.println(autoTuneBtn);
+  Serial.println(autoTuneEnable);
 
 /**** X-axis joystick ****/
   if(x > 50) // x more than 50
       {
-        CWintervalBlynkX = map(x, 100, 51,10000,40000);
-        CCWintervalBlynkX = UINT32_MAX;
+        intervalYaw = map(x, 100, 51,10000,40000);
       }
       
       else if(x < 50) // x less than 50
       {
-        CWintervalBlynkX = UINT32_MAX;
-        CCWintervalBlynkX = map(x, 0, 49,10000,40000);
+
+        intervalYaw = -map(x, 0, 49,10000,40000);
       }
 
       else // x equals 50
       {
-        CWintervalBlynkX = UINT32_MAX; // Freeze clock wise
-        CCWintervalBlynkX = UINT32_MAX; // Freeze counter clock wise
+        intervalYaw = UINT32_MAX; // Freeze rotation around z-axis
       }
 /*************************/
 
 /**** Y-axis joystick ****/
   if(y > 50) // y more than 50
       {
-        CWintervalBlynkY = map(y, 100, 51,10000,40000);
-        CCWintervalBlynkY = UINT32_MAX;
+        intervalPitch = map(y, 100, 51,10000,40000);
       }
       
       else if(y < 50) // y less than 50
       {
-        CWintervalBlynkY = UINT32_MAX;
-        CCWintervalBlynkY = map(y, 0, 49,10000,40000);
+        intervalPitch = map(y, 0, 49,10000,40000);
       }
 
       else // y equals 50
       {
-        CWintervalBlynkY = UINT32_MAX; // Freeze clock wise
-        CCWintervalBlynkY = UINT32_MAX; // Freeze counter clock wise
+        intervalPitch = UINT32_MAX; // Freeze rotation around y-axis
       }
 /*************************/
 /* On behalf of the joystick, CWintervalBlynk and CCWintervalBlynk gives a value 
@@ -150,14 +149,12 @@ on how much the setpoint on the brugi-board shall change in both X- and Y-axis. 
  //getPIDFromSPIFFS(); //Only necessary on startup
   
   //Will be done in blynk
-  jsonSerial["CWintervalBlynkX"] = CWintervalBlynkX;
-  jsonSerial["CCWintervalBlynkX"] = CCWintervalBlynkX;
-  jsonSerial["CWintervalBlynkY"] = CWintervalBlynkY;
-  jsonSerial["CCWintervalBlynkY"] = CCWintervalBlynkY;
+  jsonSerial["Interval Yaw"] = intervalYaw;
+  jsonSerial["Interval Pitch"] = intervalPitch;
   jsonSerial["P"] = P;
   jsonSerial["I"] = I;
   jsonSerial["D"] = D;
-  jsonSerial["autoTuneBtn"] = autoTuneBtn;
+  jsonSerial["autoTuneEnable"] = autoTuneEnable;
 
   //Only necessary when permanently storing
   //Shold not run in a loop
@@ -188,7 +185,7 @@ void receivedData()
     jsonI = root["I"];
     jsonD = root["D"];
     graph = root["graph"];
-    autoTuneBtn = root["autoTuneBtn"];
+    autoTuneEnable = root["autoTuneBtn"];
 
     //Print the JSON string and all parsed data
     Serial.println("Received JSON string:");
@@ -199,6 +196,10 @@ void receivedData()
     Serial.println(jsonI);
     Serial.print("D: ");
     Serial.println(jsonD);
+    Serial.print("graph: ");
+    Serial.println(graph);
+    Serial.print("autotune button: ");
+    Serial.println(autoTuneEnable);
     Serial.println("Done!\n");
     
     // clear the string
@@ -253,7 +254,7 @@ BLYNK_WRITE(V4)
 
 BLYNK_WRITE(V5)
 {
-  autoTuneBtn = param.asInt(); //Reads from button for auto-tune
+  autoTuneEnable = param.asInt(); //Reads from button for auto-tune
 }
 /******************************************************/
 
@@ -275,7 +276,7 @@ BLYNK_READ(V2)
 
 BLYNK_READ(V5)
 {
-  Blynk.virtualWrite(V5, autoTuneBtn); //writes to auto tune button
+  Blynk.virtualWrite(V5, autoTuneEnable); //writes to auto tune button
 }
 
 BLYNK_READ(V6)

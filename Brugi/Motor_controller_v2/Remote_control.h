@@ -24,13 +24,15 @@ class Remote_control
     uint16_t readRemoteInterval;
     uint32_t updateSetpointInterval;
     int16_t currentSetPoint;
-
+    uint32_t interval;
+    
 
     uint64_t counterHigh; 
     uint64_t pulseWidthHigh; 
     uint64_t pulseWidthLow; 
     uint8_t dutyCycle; 
     uint8_t previousDutyCycle;
+    
     
     
   private:

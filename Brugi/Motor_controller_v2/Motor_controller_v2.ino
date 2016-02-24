@@ -23,7 +23,7 @@ Enable:  PC3/A3(/M_P)    PC3/A3(/M_P)
 /***** Included libraries *****/
 #include "BLDC.h"
 #include "Remote_control.h"
-
+#include <ArduinoJson.h>
 
 
 /***** Pin definitions *****/

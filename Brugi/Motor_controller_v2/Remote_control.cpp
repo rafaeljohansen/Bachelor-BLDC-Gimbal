@@ -55,7 +55,16 @@ void Remote_control::readRemote(uint64_t currentMicros)
 
 void Remote_control::readBlynk(uint64_t currentMicros)
 {
-  
+  if(interval < 0)
+  {
+    m_CCWintervalBlynk = abs(interval);
+    m_CWintervalBlynk = UINT32_MAX;
+  }
+  else
+  { 
+    m_CCWintervalBlynk = UINT32_MAX;
+    m_CWintervalBlynk = interval;
+  }
 }
 
 
