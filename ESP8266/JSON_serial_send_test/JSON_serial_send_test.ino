@@ -36,6 +36,12 @@ void setup() {
   Accelerometer2.add(2); // Accelerometer 2; Y-axis
   Accelerometer2.add(3); // Accelerometer 2; Z-axis
 
+  jsonSerial["Setpoint1"] = 0;
+  jsonSerial["Setpoint2"] = 0;
+  jsonSerial["P"] = 0;
+  jsonSerial["I"] = 0;
+  jsonSerial["D"] = 0;
+
   /*** Init MPU6050 with delay here **/
 
   // Run jsonSend every 50th millisecond
