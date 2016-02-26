@@ -16,7 +16,6 @@ void Remote_control::readRemote(uint64_t currentMicros)
   {
     previousMicrosReadRemote = currentMicros;
 
-
   /****** If remote is enabled ******/
     if(!(PINC & _BV(PC3))) // 00001111 & 00001000 = 00001000 -> 11110111
     {
@@ -40,7 +39,6 @@ void Remote_control::readRemote(uint64_t currentMicros)
     }
   /**********************************/
 
-
   /****** Else if remote is disabled ******/
     else
     {
@@ -48,7 +46,6 @@ void Remote_control::readRemote(uint64_t currentMicros)
       m_CCWintervalRC = UINT32_MAX; // Freeze counter clock wise
     }
   /****************************************/    
-
 
   }
 }

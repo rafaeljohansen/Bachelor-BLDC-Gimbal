@@ -24,19 +24,7 @@
 char token[32]; // Blynk token will be stored here
 bool shouldSaveConfig = false; // Flag for saving data in the web page text fields
 
-/* Moved to JsonData.h
-double P_yaw;
-double I_yaw;
-double D_yaw;
-double P_pitch;
-double I_pitch;
-double D_pitch;
-int32_t setpointYaw;
-int32_t setpointPitch;
-*/
-
-
-struct JsonData
+struct JsonData // Struct for data to be send by Json
 {
   int16_t setpoint;
   double P;
@@ -44,16 +32,28 @@ struct JsonData
   double D;
 };
 
-int x;
-int y;
-int graph;
+struct Joystick // Struct to store the movement of the joystick in blynk
+{
+  int x;
+  int y;
+};
+
+struct RemoteDevice // Nested struct to store "RemoteDevice.Axis.interval"
+{                   // Example: "BLYNK.Yaw.CWinterval"
+  struct Axis
+  {
+  int CWinterval;
+  int CCWinterval;
+  };
+  Axis Yaw;
+  Axis Pitch;
+};
+
 bool autoTuneEnable;
 String jsonReceived = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
-int jsonP;
-int jsonI;
-int jsonD;
-
+uint64_t currentMicros;
+uint64_t previousMicrosSetpoint;
 
 /***** Objects *****/
 MPU6050 mpu1(0x68);
@@ -70,10 +70,16 @@ Ticker TransmitData;
 Ticker ReceiveData;
 Ticker TickerStoreToSPIFFS;
 
-Ticker Task;
+Ticker SetpointTicker;
+
 
 JsonData Yaw;
 JsonData Pitch;
+
+Joystick blynkJoystick;
+
+RemoteDevice RC;
+RemoteDevice BLYNK;
 
 
 /***** Blynk Connection *****/
@@ -146,6 +152,7 @@ void setup() {
   //Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wifiManager;
 
+  //wifiManager.resetSettings();
   //Set config save notify callback
   wifiManager.setSaveConfigCallback(saveConfigCallback);
   
@@ -230,7 +237,7 @@ void setup() {
     
 
   //Connect to blynk
-  Blynk.begin(token, WiFi.SSID().c_str(), WiFi.psk().c_str());  // (token, ssid, password);
+  //Blynk.begin(token, WiFi.SSID().c_str(), WiFi.psk().c_str());  // (token, ssid, password);
 
 
   /***** Initialize tickers *****/
@@ -242,18 +249,16 @@ void setup() {
   TransmitData.attach_ms(20, jsonSerialSend); //(milliseconds, method to run);
   ReceiveData.attach_ms(100, receivedSerialData);
   TickerStoreToSPIFFS.attach(120, writeDatatoSPIFFS); //(seconds, method)
-  
-
-  
+    
   //Run task every 1000 millisecond
-  Task.attach_ms(200, task);
+  SetpointTicker.attach_ms(200, generateSetpoint);
   
 }
 
 
 void loop() 
 {
-  Blynk.run();
+  //Blynk.run();
   serialEvent();
 }
 
@@ -265,8 +270,6 @@ void loop()
  */
 void jsonSerialSend()
 {
-  
-  
   //Set PID values here
   jsonSerial["SetpointYaw"] = Yaw.setpoint; 
   jsonSerial["SetpointPitch"] = Pitch.setpoint;
@@ -288,9 +291,12 @@ void jsonSerialSend()
 }
 
 
-/***** Blynk *****/
-void task()
+void generateSetpoint()
 {
+  /***** Store current micros *****/
+  currentMicros = micros();
+  /********************************/
+    
  /* Serial.print(x);
   Serial.print("\t");
   Serial.print(y);
@@ -303,45 +309,159 @@ void task()
   Serial.print("\t");
   Serial.println(autoTuneEnable); */
 
-/**** X-axis joystick ****/
-  if(x > 50) // x more than 50
+
+
+
+  /**** X-axis joystick ****/
+  if(blynkJoystick.x > 50) // x more than 50
       {
-        intervalYaw = map(x, 100, 51,10000,40000);
+        BLYNK.Yaw.CWinterval = map(blynkJoystick.x, 100, 51,10000,40000);
+        BLYNK.Yaw.CCWinterval = UINT32_MAX;
       }
       
-      else if(x < 50) // x less than 50
+      else if(blynkJoystick.x < 50) // x less than 50
       {
-
-        intervalYaw = -map(x, 0, 49,10000,40000);
+        BLYNK.Yaw.CWinterval = UINT32_MAX;
+        BLYNK.Yaw.CCWinterval = map(blynkJoystick.x, 0, 49,10000,40000);
       }
 
       else // x equals 50
       {
-        intervalYaw = UINT32_MAX; // Freeze rotation around z-axis
+        BLYNK.Yaw.CCWinterval = UINT32_MAX; // Freeze rotation around z-axis
+        BLYNK.Yaw.CWinterval = UINT32_MAX;
       }
-/*************************/
 
-/**** Y-axis joystick ****/
-  if(y > 50) // y more than 50
+  /**** Y-axis joystick ****/
+  if(blynkJoystick.y > 50) // y more than 50
       {
-        intervalPitch = map(y, 100, 51,10000,40000);
+        BLYNK.Pitch.CWinterval = map(blynkJoystick.x, 100, 51,10000,40000);
+        BLYNK.Pitch.CCWinterval = UINT32_MAX;
       }
       
-      else if(y < 50) // y less than 50
+      else if(blynkJoystick.x < 50) // x less than 50
       {
-        intervalPitch = map(y, 0, 49,10000,40000);
+        BLYNK.Pitch.CWinterval = UINT32_MAX;
+        BLYNK.Pitch.CCWinterval = map(blynkJoystick.x, 0, 49,10000,40000);
       }
 
-      else // y equals 50
+      else // x equals 50
       {
-        intervalPitch = UINT32_MAX; // Freeze rotation around y-axis
+        BLYNK.Pitch.CCWinterval = UINT32_MAX; // Freeze rotation around z-axis
+        BLYNK.Pitch.CWinterval = UINT32_MAX;
       }
 
-/* On behalf of the joystick, CWintervalBlynk and CCWintervalBlynk gives a value 
-on how much the setpoint on the brugi-board shall change in both X- and Y-axis. */
+  /* On behalf of the joystick, CWintervalBlynk and CCWintervalBlynk gives a value 
+  on how much the setpoint shall change in both X- and Y-axis. */
 
-
+  Yaw.setpoint = ChangeSetpoint(Yaw.setpoint, /*previousMicrosSetpoint, */currentMicros, RC.Yaw.CWinterval, RC.Yaw.CCWinterval, BLYNK.Yaw.CWinterval, BLYNK.Yaw.CCWinterval);
+  Pitch.setpoint = ChangeSetpoint(Pitch.setpoint, /*previousMicrosSetpoint, */currentMicros, RC.Pitch.CWinterval, RC.Pitch.CCWinterval, BLYNK.Pitch.CWinterval, BLYNK.Pitch.CCWinterval);
 }
+
+/***** This method changes the setpoint stepwise on behalf of both Blynk and RC *****/
+int ChangeSetpoint(int16_t currentSetPoint, /*uint64_t previousMicrosSetpoint, */uint64_t currentMicros, int rcCW, int rcCCW, int blynkCW, int blynkCCW)
+{
+  /****** RC changing setpoint ******/
+  if(currentMicros - previousMicrosSetpoint >= rcCW)
+  {
+    previousMicrosSetpoint = currentMicros;
+    currentSetPoint++;
+  }
+
+  if(currentMicros - previousMicrosSetpoint >= rcCCW)
+  {
+    previousMicrosSetpoint = currentMicros;
+    currentSetPoint--;
+  }
+  
+  /****** Blynk changing setpoint ******/
+  if(currentMicros - previousMicrosSetpoint >= blynkCW)
+  {
+    previousMicrosSetpoint = currentMicros;
+    currentSetPoint++;
+  }
+
+  if(currentMicros - previousMicrosSetpoint >= blynkCCW)
+  {
+    previousMicrosSetpoint = currentMicros;
+    currentSetPoint--;
+  }
+  return currentSetPoint;
+}
+
+//void RCreceive()
+//{
+//    /**************************************************************
+//  This section uses PCINT1 and 2 vector for detecting a change in
+//  the pin state. The on and off time are measured and stored, and 
+//  together we're able to measure the duty cycle in percentage for
+//  each PWM signal. The duty cycle are stored in the struct
+//  variables  motor1_input.dutyCycle  and  motor2_input.dutyCycle
+//  **************************************************************/
+//  
+//  
+//  /***** MOTOR 1 *****/
+//  ISR(PCINT2_vect) // Trigs when PD2 detects a change
+//  {
+//    if(!(PINC & _BV(PC3))) // PWM read enable pin M/P
+//    {
+//      // Turn off global interrupts
+//      cli();
+//      
+//      if(PIND & _BV(PD2)) // PWM rising
+//        Yaw.counterHigh = micros()/64; // Start high counter  
+//  
+//      else // PWM falling
+//        Yaw.pulseWidthHigh = micros()/64 - Yaw.counterHigh; // Stop high counter 
+//  
+//      
+//      // Calculate positive duty cycle (38 - 62%). Should be 50% as standard
+//      Yaw.previousDutyCycle = Yaw.dutyCycle;
+//      Yaw.dutyCycle = (Yaw.pulseWidthHigh - 900)/36 + 36;
+//      
+//      // Set dutycycle = 50 if out of range (less than 38 or more than 62)
+//      (Yaw.dutyCycle > 62 || Yaw.dutyCycle < 38) ? Yaw.dutyCycle = Yaw.previousDutyCycle : 0;
+//     
+//      // Turn on global interrupts
+//      sei();  
+//    }
+//    
+//    //Remote control not enabled
+//    else
+//      Yaw.dutyCycle = 50;
+//  }
+//
+//
+//  /***** MOTOR 2 *****/
+//  ISR(PCINT1_vect) // Trigs when PC2 detects a change
+//  { 
+//    if(!(PINC & _BV(PC3))) // PWM read enable pin M/P
+//    {
+//      // Turn off global interrupts
+//      cli();
+//      
+//      if(PINC & _BV(PC2)) // PWM rising
+//        Pitch.counterHigh = micros()/64; // Start high counter
+//      
+//      else // PWM falling
+//        Pitch.pulseWidthHigh = micros()/64 - Pitch.counterHigh; // Stop high counter
+//      
+//      
+//      // Calculate positive duty cycle (38 - 62%). Should be 50% as standard
+//      Pitch.previousDutyCycle = Pitch.dutyCycle;
+//      Pitch.dutyCycle = (Pitch.pulseWidthHigh - 900)/36 + 36;
+//      
+//      // Set dutycycle = 50 if out of range (less than 38 or more than 62)
+//      (Pitch.dutyCycle > 62 || Pitch.dutyCycle < 38) ? Pitch.dutyCycle = Pitch.previousDutyCycle : 0;
+//  
+//      // Turn on global interrupts  
+//      sei();
+//    }
+//  
+//    // Remote control not enabled
+//    else
+//      Pitch.dutyCycle = 50; 
+//  }
+//}
 
 
 void receivedSerialData()
@@ -357,15 +477,18 @@ void receivedSerialData()
       Serial.println("parseObject() failed");
 
     //Store data to variables
-    jsonP = root["P"];
-    jsonI = root["I"];
-    jsonD = root["D"];
+    Yaw.P = root["P_yaw"];
+    Yaw.I = root["I_yaw"];
+    Yaw.D = root["D_yaw"];
+    Pitch.P = root["P_pitch"];
+    Pitch.I = root["I_pitch"];
+    Pitch.D = root["D_pitch"];
     autoTuneEnable = root["Autotune"];
 
     //Print the JSON string and all parsed data
     Serial.println("Received JSON string:");
     Serial.println(jsonReceived);
-    Serial.print("P: ");
+    /*Serial.print("P: ");
     Serial.println(jsonP);
     Serial.print("I: ");
     Serial.println(jsonI);
@@ -373,7 +496,7 @@ void receivedSerialData()
     Serial.println(jsonD);
     Serial.print("autotune button: ");
     Serial.println(autoTuneEnable);
-    Serial.println("Done!\n");
+    Serial.println("Done!\n");*/
     
     // clear the string
     jsonReceived = "";
@@ -432,12 +555,12 @@ BLYNK_WRITE(V5)
 
 BLYNK_WRITE(V6)
 {
-  x = param.asInt(); //Reads from joystick horisontal value 
+  blynkJoystick.x = param.asInt(); //Reads from joystick horisontal value 
 }
 
 BLYNK_WRITE(V7)
 {
-  y = param.asInt(); //Reads from joystick vertical value
+  blynkJoystick.y = param.asInt(); //Reads from joystick vertical value
 }
 
 BLYNK_WRITE(V8)
